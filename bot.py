@@ -1,5 +1,19 @@
+import pickle
+import os
 from addressbook import AddressBook, Record
 from addressbook import Phone, Birthday
+
+# ====== Функції для збереження та завантаження ======
+def save_data(book, filename="addressbook.pkl"):
+    with open(filename, "wb") as f:
+        pickle.dump(book, f)
+
+def load_data(filename="addressbook.pkl"):
+    if os.path.exists(filename):
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    else:
+        return AddressBook()
 
 # ====== Декоратор для обробки помилок ======
 def input_error(func):
@@ -81,14 +95,15 @@ def parse_input(user_input):
 
 # ====== Головна функція ======
 def main():
-    book = AddressBook()
+    book = load_data()
     print("Привіт! Я ваш віртуальний помічник.")
     while True:
         user_input = input("Введіть команду: ")
         command, args = parse_input(user_input)
 
         if command in ["close", "exit"]:
-            print("До побачення!")
+            save_data(book)
+            print("Дані збережено. До побачення!")
             break
         elif command == "hello":
             print("Чим можу допомогти?")
@@ -111,3 +126,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
